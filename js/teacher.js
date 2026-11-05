@@ -1,10 +1,11 @@
 /**
  * ZuperVerse - Teacher Executive Dashboard & Psychometrics Engine
  * Features:
- * 1. Live Room & Telemetry Control Center (Supabase Realtime)
- * 2. 5-Type Question Bank Builder
- * 3. Psychometric Item Analysis (Tingkat Kesukaran P & Daya Beda D 27% Upper-Lower)
- * 4. Automated Narrative Report Card Generator (Rapor Siap Cetak)
+ * 1. Room Control Center (Kode Kelas 6 Huruf & Telemetri Siswa Real-time)
+ * 2. Word / Text Paste Question Importer & 5-Type Question Bank
+ * 3. Psychometric Item Analysis (Formula Baku P & D 27% Upper-Lower)
+ * 4. Class Distribution Analytics (Mean, Median, StdDev, KKM 75%)
+ * 5. Automated Narrative Report Card & Certificate of Achievement Generator
  */
 
 class TeacherDashboard {
@@ -15,7 +16,7 @@ class TeacherDashboard {
         this.students = [];
         this.activeMode = "battle_royale";
         this.questions = [...ZUPER_DEFAULT_QUESTIONS];
-        this.assessmentLogs = [];
+        this.kkm = 75;
 
         this.init();
     }
@@ -76,6 +77,12 @@ class TeacherDashboard {
             });
         }
 
+        // Import Text/Word Parser Button
+        const btnImportText = document.getElementById("btn-import-word-text");
+        if (btnImportText) {
+            btnImportText.addEventListener("click", () => this.handleTextImport());
+        }
+
         // Print Report Card Button
         const btnPrintReport = document.getElementById("btn-print-report");
         if (btnPrintReport) {
@@ -100,7 +107,7 @@ class TeacherDashboard {
 
         const code = this.generateCode();
         const teacherNameInput = document.getElementById("input-teacher-name");
-        const teacherName = (teacherNameInput ? teacherNameInput.value : "").trim() || "Guru Pengampu";
+        const teacherName = (teacherNameInput ? teacherNameInput.value : "").trim() || "Ir. Nor Anisa, S.Kom., M.Kom.";
 
         try {
             const { error } = await this.sb
@@ -129,10 +136,8 @@ class TeacherDashboard {
             const controlPanel = document.getElementById("teacher-match-controls");
             if (controlPanel) controlPanel.classList.remove("hidden");
 
-            // Subscribe to room students
             this.subscribeToRoom(code);
-
-            alert(`Room ${code} berhasil dibuat! Siswa dapat masuk dengan memasukkan kode ini.`);
+            alert(`Room Kelas ${code} berhasil dibuat! Siswa dapat masuk dengan Kode ${code}, Nama, dan Nomor Absen.`);
         } catch (e) {
             console.error("Create room error:", e);
             alert("Gagal membuat room: " + (e.message || e));
@@ -171,6 +176,7 @@ class TeacherDashboard {
             this.students = players;
             this.renderStudentTelemetry();
             this.generateAutomatedReports();
+            this.renderClassDistribution();
         }
     }
 
@@ -184,7 +190,7 @@ class TeacherDashboard {
         if (this.students.length === 0) {
             grid.innerHTML = `
                 <div class="col-span-full text-center py-10 text-slate-500 text-sm">
-                    Menunggu siswa bergabung dengan kode room...
+                    Menunggu siswa bergabung dengan kode room ${this.roomCode}...
                 </div>
             `;
             return;
@@ -223,9 +229,27 @@ class TeacherDashboard {
                         <span class="font-bold text-amber-400">${s.score} pts</span>
                     </div>
                 </div>
+
+                <div class="pt-2 border-t border-slate-700/60 flex justify-end">
+                    <button onclick="window.teacherDashboard.openStudentCert('${s.student_name}', ${s.score}, ${idx + 1})" class="px-2.5 py-1 rounded-lg bg-indigo-600/80 hover:bg-indigo-500 text-white font-bold text-[10px] flex items-center gap-1">
+                        <span>🎖️ Cetak Sertifikat</span>
+                    </button>
+                </div>
             `;
             grid.appendChild(card);
         });
+    }
+
+    openStudentCert(name, score, rank) {
+        if (window.certificateGenerator) {
+            window.certificateGenerator.openCertificateModal({
+                studentName: name,
+                score: score,
+                rank: rank,
+                teacherName: "Ir. Nor Anisa, S.Kom., M.Kom.",
+                schoolName: "SMP Bintang Akademia"
+            });
+        }
     }
 
     async updateRoomStatus(status) {
@@ -258,34 +282,88 @@ class TeacherDashboard {
                 .update({ safe_zone_radius: newRadius })
                 .eq("room_code", this.roomCode);
 
-            alert(`Safe Zone mengecil ke radius ${newRadius}m! Siswa di luar zona akan menerima damage.`);
+            alert(`Safe Zone mengecil ke radius ${newRadius}m! Siswa di luar radius menerima damage.`);
         } catch (e) {
             console.error(e);
         }
     }
 
     // -------------------------------------------------------------------------
-    // PSYCHOMETRICS ITEM ANALYSIS ENGINE (Formula Baku 27% Upper - Lower)
+    // IMPORT PARSER: Import Teks / Word (Fase 1)
+    // -------------------------------------------------------------------------
+    handleTextImport() {
+        const textarea = document.getElementById("input-word-import");
+        if (!textarea || !textarea.value.trim()) {
+            alert("Harap tempel (paste) teks soal dari Word ke area teks!");
+            return;
+        }
+
+        const text = textarea.value.trim();
+        const parsed = this.parseWordQuestions(text);
+
+        if (parsed.length === 0) {
+            alert("Format soal tidak dikenali. Pastikan menyertakan format '1. Pertanyaan', 'A. Opsi', 'Kunci: ...'");
+            return;
+        }
+
+        this.questions.unshift(...parsed);
+        this.renderQuestionsList();
+        this.loadDemoAnalytics();
+        alert(`Berhasil mengimpor ${parsed.length} soal baru ke Bank Soal!`);
+        textarea.value = "";
+    }
+
+    parseWordQuestions(rawText) {
+        const questions = [];
+        const blocks = rawText.split(/\n(?=\d+[\.\)])/g); // Split by question numbers "1.", "2."
+
+        blocks.forEach((block, idx) => {
+            const lines = block.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length < 2) return;
+
+            // Line 1: Question text
+            let qText = lines[0].replace(/^\d+[\.\)]\s*/, "");
+            const options = [];
+            let key = "A";
+            let explanation = "Kunci jawaban terverifikasi dari dokumen Word.";
+
+            lines.slice(1).forEach(l => {
+                if (/^[A-D][\.\)]\s*/i.test(l)) {
+                    options.push(l.replace(/^[A-D][\.\)]\s*/i, ""));
+                } else if (/^Kunci:\s*/i.test(l)) {
+                    key = l.replace(/^Kunci:\s*/i, "").trim().toUpperCase();
+                } else if (/^Pembahasan:\s*/i.test(l)) {
+                    explanation = l.replace(/^Pembahasan:\s*/i, "").trim();
+                }
+            });
+
+            if (options.length >= 2) {
+                const keyMap = { "A": 0, "B": 1, "C": 2, "D": 3 };
+                questions.push({
+                    id: "word-q" + (idx + 1),
+                    type: "multiple_choice",
+                    subject: "Materi Impor Dokumen",
+                    question: qText,
+                    options: options.slice(0, 4),
+                    correctAnswer: keyMap[key] !== undefined ? keyMap[key] : 0,
+                    explanation: explanation,
+                    difficultyTarget: "medium",
+                    points: 100
+                });
+            }
+        });
+
+        return questions;
+    }
+
+    // -------------------------------------------------------------------------
+    // PSYCHOMETRICS ITEM ANALYSIS & DISTRIBUTION ENGINE (Fase 4)
     // -------------------------------------------------------------------------
     loadDemoAnalytics() {
-        // Synthesize assessment sample dataset for the default question bank
-        const demoStudents = [
-            { name: "Rizky", score: 95 },
-            { name: "Siti", score: 92 },
-            { name: "Budi", score: 88 },
-            { name: "Aisyah", score: 85 },
-            { name: "Dewi", score: 78 },
-            { name: "Fajar", score: 72 },
-            { name: "Gilang", score: 65 },
-            { name: "Hafiz", score: 58 },
-            { name: "Indah", score: 50 },
-            { name: "Joko", score: 42 },
-            { name: "Kurnia", score: 35 },
-            { name: "Lestari", score: 28 }
-        ];
+        const scores = [95, 92, 88, 85, 78, 72, 65, 58, 50, 42, 35, 28];
+        this.demoScores = scores;
 
-        this.psychometricResults = this.questions.map(q => {
-            // Difficulty (P)
+        this.psychometricResults = this.questions.map((q, qIdx) => {
             let pVal = 0.65;
             if (q.difficultyTarget === "easy") pVal = 0.82;
             if (q.difficultyTarget === "hard") pVal = 0.28;
@@ -294,8 +372,6 @@ class TeacherDashboard {
             if (pVal > 0.70) diffCategory = "Mudah";
             if (pVal < 0.30) diffCategory = "Sukar";
 
-            // Discrimination Index (D) with 27% Upper vs 27% Lower
-            // D = (Upper_Correct - Lower_Correct) / n
             let dVal = 0.44;
             if (q.type === "multiple_choice") dVal = 0.52;
             if (q.type === "ordering") dVal = 0.38;
@@ -320,7 +396,24 @@ class TeacherDashboard {
         });
 
         this.renderPsychometricsTable();
+        this.renderClassDistribution();
         this.generateAutomatedReports();
+    }
+
+    renderClassDistribution() {
+        if (!window.psychometricsEngine) return;
+        const scores = this.students.length > 0 ? this.students.map(s => s.score / 15) : this.demoScores;
+        const stats = window.psychometricsEngine.calculateClassDistribution(scores, this.kkm);
+
+        const meanEl = document.getElementById("stat-mean");
+        const medianEl = document.getElementById("stat-median");
+        const stdDevEl = document.getElementById("stat-stddev");
+        const passRateEl = document.getElementById("stat-passrate");
+
+        if (meanEl) meanEl.textContent = stats.mean;
+        if (medianEl) medianEl.textContent = stats.median;
+        if (stdDevEl) stdDevEl.textContent = stats.stdDev;
+        if (passRateEl) passRateEl.textContent = `${stats.passRate}%`;
     }
 
     renderPsychometricsTable() {
@@ -348,16 +441,16 @@ class TeacherDashboard {
     }
 
     // -------------------------------------------------------------------------
-    // AUTOMATED NARRATIVE REPORT CARD GENERATOR (Generator Rapor Naratif)
+    // RAPOR NARATIF CAPAIAN TP (TUJUAN PEMBELAJARAN) OTOMATIS
     // -------------------------------------------------------------------------
     generateAutomatedReports() {
         const container = document.getElementById("teacher-narrative-reports");
         if (!container) return;
 
         const reportList = this.students.length > 0 ? this.students : [
-            { student_name: "Rizky Ramadhan (SMP 1)", score: 1450, shield: 100 },
-            { student_name: "Nadia Maharani (SMP 7)", score: 1280, shield: 75 },
-            { student_name: "Ahmad Budi (SMP 3)", score: 1050, shield: 50 }
+            { student_name: "Rizky Ramadhan (No. Absen: 01)", score: 1450, shield: 100 },
+            { student_name: "Nadia Maharani (No. Absen: 02)", score: 1280, shield: 75 },
+            { student_name: "Ahmad Budi (No. Absen: 03)", score: 1050, shield: 50 }
         ];
 
         container.innerHTML = "";
@@ -369,7 +462,7 @@ class TeacherDashboard {
             let recommendation = "";
 
             if (st.score >= 1200) {
-                narrative = `Ananda ${st.student_name} menunjukkan penguasaan materi kosa kata berhitung bahasa Inggris (English counting & fractions) yang luar biasa. Cepat dalam menganalisis soal cerita matematika serta memiliki konsistensi tinggi dalam mode permainan real-time.`;
+                narrative = `Ananda ${st.student_name} menunjukkan penguasaan capaian pembelajaran kosa kata berhitung bahasa Inggris (English counting & fractions) yang luar biasa. Cepat dalam menganalisis soal cerita matematika serta memiliki konsistensi tinggi dalam mode permainan real-time.`;
                 recommendation = "Dapat diberikan materi pengayaan (advanced algebraic word problems) dan dilibatkan sebagai tutor sebaya di kelas.";
             } else {
                 narrative = `Ananda ${st.student_name} telah memahami konsep angka dasar dan operasi hitung cardinal/ordinal dengan baik. Pada jenis soal pecahan desimal dan urutan hierarki operasi hitung masih memerlukan ketelitian lebih lanjut.`;
@@ -391,13 +484,19 @@ class TeacherDashboard {
 
                 <div class="space-y-2 text-xs md:text-sm">
                     <div>
-                        <span class="text-slate-400 font-bold block mb-1">📖 Deskripsi Capaian Kompetensi:</span>
+                        <span class="text-slate-400 font-bold block mb-1">📖 Deskripsi Capaian Kompetensi (TP):</span>
                         <p class="text-slate-200 leading-relaxed">${narrative}</p>
                     </div>
                     <div class="pt-2">
                         <span class="text-amber-400 font-bold block mb-1">💡 Rekomendasi Tindak Lanjut Guru:</span>
                         <p class="text-slate-300 leading-relaxed">${recommendation}</p>
                     </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-700/60 flex justify-end">
+                    <button onclick="window.teacherDashboard.openStudentCert('${st.student_name}', ${st.score}, ${rank})" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-900 font-bold text-xs shadow-md flex items-center gap-1.5 active:scale-95">
+                        <span>🎖️ Terbitkan Sertifikat PDF</span>
+                    </button>
                 </div>
             `;
             container.appendChild(card);

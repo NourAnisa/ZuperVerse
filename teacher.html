@@ -64,14 +64,14 @@
                 <div>
                     <h2 class="text-2xl font-black text-white flex items-center gap-2.5">
                         <span>👑</span>
-                        <span>Pusat Kendali Room & Pertandingan Kelas</span>
+                        <span>Pusat Kendali Room & Pertandingan Kelas (Fase 1)</span>
                     </h2>
-                    <p class="text-xs text-slate-400">Buka sesi baru, pilih mode game, dan pantau telemetri seluruh siswa secara langsung.</p>
+                    <p class="text-xs text-slate-400">Buka sesi baru dengan Kode Kelas 6 huruf dan pantau telemetri seluruh siswa secara langsung.</p>
                 </div>
 
                 <!-- Active Room Badge -->
                 <div id="teacher-active-room-badge" class="hidden flex items-center gap-3 p-2 rounded-2xl bg-indigo-950/60 border border-indigo-500/50">
-                    <span class="text-xs text-indigo-300 font-bold px-2">KODE ROOM:</span>
+                    <span class="text-xs text-indigo-300 font-bold px-2">KODE ROOM KELAS:</span>
                     <span id="lbl-teacher-room-code" class="text-2xl font-black text-amber-400 font-mono tracking-wider">ZUP00</span>
                 </div>
             </div>
@@ -82,12 +82,12 @@
                 <div class="glass-panel p-6 rounded-3xl border border-indigo-500/40 space-y-4">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
                         <span>✨</span>
-                        <span>Buat Room Baru</span>
+                        <span>Buat Room Kelas Baru</span>
                     </h3>
                     
                     <div>
-                        <label class="text-xs text-slate-300 font-bold block mb-1">Nama Guru / Kelas:</label>
-                        <input id="input-teacher-name" type="text" placeholder="Contoh: Bu Anisa - IPA & Math 7A" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold focus:border-indigo-400 focus:outline-none">
+                        <label class="text-xs text-slate-300 font-bold block mb-1">Nama Guru / Instansi:</label>
+                        <input id="input-teacher-name" type="text" value="Ir. Nor Anisa, S.Kom., M.Kom." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold focus:border-indigo-400 focus:outline-none">
                     </div>
 
                     <div>
@@ -142,7 +142,7 @@
 
                     <!-- Live Students Telemetry Grid -->
                     <div class="space-y-2 pt-2">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Telemetri Siswa Real-time (Supabase Sync):</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Telemetri & Presensi Siswa Real-time (Supabase Sync):</span>
                         <div id="teacher-students-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto pr-1">
                             <div class="col-span-full text-center py-8 text-slate-500 text-xs">
                                 Belum ada siswa yang masuk. Bagikan kode room ke siswa.
@@ -154,33 +154,116 @@
         </section>
 
         <!-- =============================================================== -->
-        <!-- SECTION 2: PSYCHOMETRIC ITEM ANALYSIS (FORMULA BAKU 27%)        -->
+        <!-- SECTION 2: IMPORT TEKS / WORD & BANK SOAL (FASE 1)              -->
         <!-- =============================================================== -->
-        <section class="space-y-4">
+        <section class="space-y-6 no-print">
+            <div class="border-b border-slate-800 pb-3">
+                <h2 class="text-2xl font-black text-white flex items-center gap-2">
+                    <span>📚</span>
+                    <span>Bank Soal Interaktif & Impor Teks/Word (Fase 1)</span>
+                </h2>
+                <p class="text-xs text-slate-400">Dukungan CRUD 5 tipe soal dan pengimpor soal otomatis dari salinan dokumen Microsoft Word.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Word Import Box -->
+                <div class="glass-panel p-6 rounded-3xl border border-indigo-500/40 space-y-4">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>📄</span>
+                        <span>Impor Soal dari Word / Teks</span>
+                    </h3>
+                    <p class="text-xs text-slate-400">
+                        Tempelkan teks soal langsung dari file Word. Sistem akan mengenali pertanyaan, opsi A-D, kunci jawaban, dan pembahasan secara otomatis.
+                    </p>
+                    <textarea id="input-word-import" rows="6" placeholder="Contoh:&#10;1. Sarah has 24 apples. She gives 1/4 of them to Budi. How many does Budi get?&#10;A. 6 apples&#10;B. 8 apples&#10;C. 10 apples&#10;D. 12 apples&#10;Kunci: A&#10;Pembahasan: 24 dibagi 4 = 6 apples." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-indigo-400 focus:outline-none"></textarea>
+                    
+                    <button id="btn-import-word-text" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 font-bold text-white text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <span>⚡ Proses & Impor ke Bank Soal</span>
+                    </button>
+                </div>
+
+                <!-- Add Question Form Manual -->
+                <form id="form-add-question" class="glass-panel p-6 rounded-3xl border border-indigo-500/40 space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>➕</span>
+                        <span>Tambah Soal Manual</span>
+                    </h3>
+
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-bold block mb-1">Mata Pelajaran:</label>
+                        <input id="input-custom-q-subject" type="text" placeholder="Contoh: English Math (Fractions)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-indigo-400 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-bold block mb-1">Tipe Soal (5 Tipe):</label>
+                        <select id="select-q-type" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold focus:border-indigo-400 focus:outline-none">
+                            <option value="multiple_choice">1. Pilihan Ganda (Multiple Choice)</option>
+                            <option value="true_false">2. Benar / Salah (True / False)</option>
+                            <option value="short_answer">3. Isian Singkat (Short Answer)</option>
+                            <option value="matching">4. Menjodohkan (Matching Pairs)</option>
+                            <option value="ordering">5. Urutan Logika (Sequence Ordering)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-bold block mb-1">Pertanyaan:</label>
+                        <textarea id="input-custom-q-text" rows="2" placeholder="Tuliskan pertanyaan..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-indigo-400 focus:outline-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-bold block mb-1">Pembahasan:</label>
+                        <textarea id="input-custom-q-exp" rows="2" placeholder="Penjelasan jawaban..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-indigo-400 focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 font-bold text-white text-xs shadow-md">
+                        Simpan ke Bank Soal
+                    </button>
+                </form>
+
+                <!-- Questions List Preview -->
+                <div class="space-y-3">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Daftar Butir Soal Aktif:</span>
+                    <div id="teacher-questions-list" class="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                        <!-- Injected by teacher.js -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- SECTION 3: PSYCHOMETRIC ITEM ANALYSIS & STATS (FASE 4)          -->
+        <!-- =============================================================== -->
+        <section class="space-y-6">
             <div class="border-b border-slate-800 pb-3">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-2">
-                    <span>🔬 Standar Asesmen Pendidikan & Psikometrik</span>
+                    <span>🔬 Metrik Asesmen & Standar Psikometrik (Fase 4)</span>
                 </div>
                 <h2 class="text-2xl font-black text-white flex items-center gap-2">
                     <span>📊</span>
-                    <span>Analisis Butir Soal Psikometrik (Item Analysis)</span>
+                    <span>Analisis Butir Soal Psikometrik & Distribusi Nilai</span>
                 </h2>
                 <p class="text-xs text-slate-400">
-                    Menghitung <b>Tingkat Kesukaran (P)</b> dan <b>Daya Pembeda (D)</b> menggunakan metode baku perbandingan kelompok <b>Upper 27% vs Lower 27%</b>.
+                    Menghitung <b>Tingkat Kesukaran (P)</b> dan <b>Daya Pembeda (D)</b> menggunakan metode baku kelompok <b>Upper 27% vs Lower 27%</b>.
                 </p>
             </div>
 
-            <!-- Formulas Information Callout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-                <div class="p-4 rounded-2xl bg-slate-800/80 border border-indigo-500/30 space-y-1.5 font-sans">
-                    <span class="font-bold text-indigo-400">1. Tingkat Kesukaran (Difficulty Index - P):</span>
-                    <p class="text-slate-300">P = B / N (B: Siswa benar, N: Total peserta)</p>
-                    <p class="text-[11px] text-slate-400">Kriteria: P > 0.70 (Mudah), 0.30 - 0.70 (Sedang / Ideal), &lt; 0.30 (Sukar)</p>
+            <!-- Class Score Distribution Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-panel p-4 rounded-2xl border border-indigo-500/30 text-center">
+                    <span class="text-[10px] font-bold text-indigo-300 uppercase block">Rata-Rata (Mean)</span>
+                    <span id="stat-mean" class="text-2xl font-black text-white">78.5</span>
                 </div>
-                <div class="p-4 rounded-2xl bg-slate-800/80 border border-pink-500/30 space-y-1.5 font-sans">
-                    <span class="font-bold text-pink-400">2. Daya Beda (Discrimination Index - D):</span>
-                    <p class="text-slate-300">D = (U - L) / n (Metode Kelompok 27% Atas vs 27% Bawah)</p>
-                    <p class="text-[11px] text-slate-400">Kriteria: D &ge; 0.40 (Sangat Baik), 0.30-0.39 (Baik), 0.20-0.29 (Cukup), &lt; 0.20 (Jelek)</p>
+                <div class="glass-panel p-4 rounded-2xl border border-cyan-500/30 text-center">
+                    <span class="text-[10px] font-bold text-cyan-300 uppercase block">Nilai Tengah (Median)</span>
+                    <span id="stat-median" class="text-2xl font-black text-cyan-300">80.0</span>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border border-pink-500/30 text-center">
+                    <span class="text-[10px] font-bold text-pink-300 uppercase block">Standar Deviasi (σ)</span>
+                    <span id="stat-stddev" class="text-2xl font-black text-pink-300">12.4</span>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border border-emerald-500/30 text-center">
+                    <span class="text-[10px] font-bold text-emerald-300 uppercase block">Ketuntasan (KKM 75)</span>
+                    <span id="stat-passrate" class="text-2xl font-black text-emerald-400">83.3%</span>
                 </div>
             </div>
 
@@ -207,88 +290,27 @@
         </section>
 
         <!-- =============================================================== -->
-        <!-- SECTION 3: AUTOMATED NARRATIVE REPORT CARD GENERATOR            -->
+        <!-- SECTION 4: RAPOR CAPAIAN TP & SERTIFIKAT (FASE 4)               -->
         <!-- =============================================================== -->
         <section class="space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                     <h2 class="text-2xl font-black text-white flex items-center gap-2">
                         <span>📝</span>
-                        <span>Generator Rapor Naratif Otomatis Siswa</span>
+                        <span>Generator Rapor Capaian TP & Sertifikat Prestasi (Fase 4)</span>
                     </h2>
-                    <p class="text-xs text-slate-400">Deskripsi capaian kompetensi, analisis perkembangan kognitif, dan rekomendasi tindak lanjut siap cetak.</p>
+                    <p class="text-xs text-slate-400">Deskripsi capaian kompetensi, analisis perkembangan kognitif, dan pencetakan sertifikat siswa resmi.</p>
                 </div>
 
                 <button id="btn-print-report" class="no-print px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-indigo-600 hover:from-pink-500 font-bold text-xs text-white shadow-lg flex items-center gap-2 transition-all">
                     <span>🖨️</span>
-                    <span>Cetak Rapor / Simpan PDF</span>
+                    <span>Cetak Rapor Kelas / Simpan PDF</span>
                 </button>
             </div>
 
             <!-- Cards Container -->
             <div id="teacher-narrative-reports" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <!-- Injected dynamically by teacher.js -->
-            </div>
-        </section>
-
-        <!-- =============================================================== -->
-        <!-- SECTION 4: 5-TYPE INTERACTIVE QUESTION BANK BUILDER             -->
-        <!-- =============================================================== -->
-        <section class="space-y-6 no-print">
-            <div class="border-b border-slate-800 pb-3">
-                <h2 class="text-2xl font-black text-white flex items-center gap-2">
-                    <span>📚</span>
-                    <span>Bank Soal Interaktif (Mendukung 5 Tipe Soal)</span>
-                </h2>
-                <p class="text-xs text-slate-400">Pilihan Ganda, Benar/Salah, Isian Singkat, Menjodohkan, dan Urutan Hierarki Logika.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Add Question Form -->
-                <form id="form-add-question" class="glass-panel p-6 rounded-3xl border border-indigo-500/40 space-y-4">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <span>➕</span>
-                        <span>Tambah Soal Baru</span>
-                    </h3>
-
-                    <div>
-                        <label class="text-xs text-slate-300 font-bold block mb-1">Mata Pelajaran / Topik:</label>
-                        <input id="input-custom-q-subject" type="text" placeholder="Contoh: English Math (Fractions)" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold focus:border-indigo-400 focus:outline-none">
-                    </div>
-
-                    <div>
-                        <label class="text-xs text-slate-300 font-bold block mb-1">Tipe Soal:</label>
-                        <select id="select-q-type" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold focus:border-indigo-400 focus:outline-none">
-                            <option value="multiple_choice">1. Pilihan Ganda (Multiple Choice)</option>
-                            <option value="true_false">2. Benar / Salah (True / False)</option>
-                            <option value="short_answer">3. Isian Singkat (Short Answer)</option>
-                            <option value="matching">4. Menjodohkan (Matching Pairs)</option>
-                            <option value="ordering">5. Urutan Logika (Sequence Ordering)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="text-xs text-slate-300 font-bold block mb-1">Teks Pertanyaan / Soal:</label>
-                        <textarea id="input-custom-q-text" rows="3" placeholder="Tuliskan teks pertanyaan di sini..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold focus:border-indigo-400 focus:outline-none"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="text-xs text-slate-300 font-bold block mb-1">Pembahasan / Penjelasan Materi:</label>
-                        <textarea id="input-custom-q-exp" rows="2" placeholder="Penjelasan kunci jawaban..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold focus:border-indigo-400 focus:outline-none"></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 font-bold text-white text-xs shadow-md transition-all active:scale-95">
-                        Simpan ke Bank Soal
-                    </button>
-                </form>
-
-                <!-- Questions List Preview -->
-                <div class="lg:col-span-2 space-y-3">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Daftar Butir Soal Aktif:</span>
-                    <div id="teacher-questions-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                        <!-- Injected by teacher.js -->
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -304,6 +326,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/questions-default.js"></script>
+    <script src="js/psychometrics.js"></script>
+    <script src="js/certificate.js"></script>
     <script src="js/teacher.js"></script>
 
 </body>

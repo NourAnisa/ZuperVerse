@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZuperVerse - Platform Metaverse Edukasi 3D & Asesmen Psikometrik Guru</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -52,17 +54,17 @@
 
     <!-- Hero Selection Section -->
     <main class="flex-1 flex flex-col items-center justify-center max-w-5xl mx-auto px-4 py-12 text-center">
-        <!-- Badge -->
+        <!-- Roadmap Status Badge -->
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs md:text-sm font-semibold mb-6">
-            <span>✨ Generasi Baru Gamifikasi Pendidikan Berbasis 3D WebGL & Psikometrik</span>
+            <span>✨ Fase 1 - 4 Aktif: Asesmen Guru, Kota Ilmu 3D, Mini-Games & Rapor TP</span>
         </div>
 
         <h2 class="text-4xl md:text-6xl font-black tracking-tight leading-tight md:leading-none max-w-3xl mb-6">
-            Jelajahi Dunia Belajar, Taklukkan <span class="bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent">Metaverse Akademia!</span>
+            Jelajahi Kota Ilmu, Taklukkan <span class="bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent">Metaverse Pembelajaran!</span>
         </h2>
 
         <p class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto mb-12 leading-relaxed">
-            Platform pembelajaran interaktif terintegrasi: Siswa bertualang di pulau 3D dengan mode Battle Royale & Boss Raid, sementara Guru memantau telemetri kelas, menganalisis butir soal secara psikometrik, dan mencetak rapor naratif otomatis.
+            Platform edukasi 3D terpadu: Siswa berpetualang di gedung-gedung mapel 3D Kota Ilmu dengan mode Battle Royale, Boss Raid, Lari Kilat 4-Lajur & Jembatan Juara, sementara Guru mengelola room kelas, menganalisis psikometrik butir soal, dan mencetak sertifikat serta rapor capaian TP otomatis.
         </p>
 
         <!-- Role Portals Grid -->
@@ -74,9 +76,9 @@
                         🎮
                     </div>
                     <span class="text-xs uppercase tracking-widest font-bold text-indigo-400">Portal Peserta Didik</span>
-                    <h3 class="text-2xl font-black text-white mt-1 mb-3">Dunia 3D Siswa</h3>
+                    <h3 class="text-2xl font-black text-white mt-1 mb-3">Dunia 3D Kota Ilmu</h3>
                     <p class="text-xs md:text-sm text-slate-300 leading-relaxed mb-8">
-                        Kustomisasi avatarmu, jelajahi pulau Akademia dalam 3D, masuki arena Battle Royale dengan safe zone yang mengecil, dan kalahkan Boss monster bersama teman sekelas!
+                        Kustomisasi avatarmu, jelajahi gedung-gedung mapel 3D, masuki pintu kuis otomatis, tanding di mode Lari Kilat & Jembatan Juara, serta kalahkan Boss Monster bersama teman sekelas!
                     </p>
                 </div>
                 <div class="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 font-bold text-white text-sm flex items-center justify-between group-hover:shadow-lg group-hover:shadow-indigo-500/30 transition-all">
@@ -92,9 +94,9 @@
                         📊
                     </div>
                     <span class="text-xs uppercase tracking-widest font-bold text-pink-400">Portal Pendidik & Asesor</span>
-                    <h3 class="text-2xl font-black text-white mt-1 mb-3">Dashboard Guru</h3>
+                    <h3 class="text-2xl font-black text-white mt-1 mb-3">Dashboard Eksekutif Guru</h3>
                     <p class="text-xs md:text-sm text-slate-300 leading-relaxed mb-8">
-                        Buka room kelas, kelola 5 tipe bank soal interaktif, analisis butir soal psikometrik (Tingkat Kesukaran P & Daya Beda D 27%), dan ekspor rapor naratif otomatis siap cetak.
+                        Buka room kelas dengan Kode 6 Huruf, impor soal dari Word, analisis psikometrik (P & D 27%), pantau distribusi nilai, serta cetak rapor capaian TP dan sertifikat penghargaan resmi.
                     </p>
                 </div>
                 <div class="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-600 font-bold text-white text-sm flex items-center justify-between group-hover:shadow-lg group-hover:shadow-pink-500/30 transition-all">
@@ -108,8 +110,19 @@
     <!-- Footer -->
     <footer class="w-full text-center py-6 text-xs text-slate-500 border-t border-slate-800/80">
         <p>ZuperVerse • Platform Gamifikasi Pembelajaran 3D & Asesmen Psikometrik Guru</p>
-        <p class="mt-1 text-[11px] text-slate-600">Ditenagai oleh Three.js WebGL Engine & Supabase Realtime Database</p>
+        <p class="mt-1 text-[11px] text-slate-600">Ditenagai oleh Three.js WebGL Engine, PWA Offline Cache, & Supabase Realtime Database</p>
     </footer>
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then((reg) => {
+                    console.log('⚡ PWA Service Worker Registered:', reg.scope);
+                }).catch(err => console.warn('PWA reg error:', err));
+            });
+        }
+    </script>
 
 </body>
 </html>

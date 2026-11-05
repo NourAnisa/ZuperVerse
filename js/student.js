@@ -1,5 +1,6 @@
 /**
  * ZuperVerse - Student Gameplay & Realtime Multi-Mode Controller
+ * Integrated with Kota Ilmu Building Door Triggers & Timer System
  */
 
 class StudentApp {
@@ -9,7 +10,8 @@ class StudentApp {
         this.world = null;
 
         // Player state
-        this.studentName = localStorage.getItem("zuper_name") || "Player_" + Math.floor(Math.random() * 899 + 100);
+        this.studentName = localStorage.getItem("zuper_name") || "Budi Pratama";
+        this.absen = localStorage.getItem("zuper_absen") || "01";
         this.color = localStorage.getItem("zuper_color") || "#6366f1";
         this.hat = localStorage.getItem("zuper_hat") || "cap";
         this.cape = localStorage.getItem("zuper_cape") || "none";
@@ -25,22 +27,24 @@ class StudentApp {
         this.currentRoom = null;
         this.roomChannel = null;
         this.isMultiplayer = false;
-        this.roomMode = "adventure"; // adventure, battle_royale, boss_raid, team_duel
+        this.roomMode = "adventure";
         this.bossHp = 5000;
         this.bossMaxHp = 5000;
 
-        // Question state
+        // Question & Timer state
         this.currentQ = null;
+        this.qTimerInterval = null;
+        this.timeLeft = 15;
         this.qStartTime = 0;
 
         this.init();
     }
 
     init() {
-        // 1. Initialize 3D World
-        this.world = new ZuperWorld3D("viewport3d", (zone) => this.handleZoneInteraction(zone));
+        // 1. Initialize 3D World (Kota Ilmu)
+        this.world = new ZuperWorld3D("viewport3d", (zone) => this.handleBuildingDoorInteraction(zone));
         this.world.updatePlayerCustomization({
-            name: this.studentName,
+            name: `${this.studentName} (#${this.absen})`,
             color: this.color,
             hat: this.hat,
             cape: this.cape
@@ -60,7 +64,7 @@ class StudentApp {
     }
 
     bindUI() {
-        // Player Profile & Avatar Customizer
+        // Avatar Customizer
         const btnAvatar = document.getElementById("btn-custom-avatar");
         const modalAvatar = document.getElementById("avatar-modal");
         if (btnAvatar && modalAvatar) {
@@ -79,6 +83,12 @@ class StudentApp {
                     localStorage.setItem("zuper_name", this.studentName);
                 }
 
+                const absenInp = document.getElementById("input-avatar-absen");
+                if (absenInp && absenInp.value) {
+                    this.absen = absenInp.value.padStart(2, "0");
+                    localStorage.setItem("zuper_absen", this.absen);
+                }
+
                 const colorPick = document.getElementById("select-avatar-color");
                 if (colorPick) {
                     this.color = colorPick.value;
@@ -91,14 +101,8 @@ class StudentApp {
                     localStorage.setItem("zuper_hat", this.hat);
                 }
 
-                const capePick = document.getElementById("select-avatar-cape");
-                if (capePick) {
-                    this.cape = capePick.value;
-                    localStorage.setItem("zuper_cape", this.cape);
-                }
-
                 this.world.updatePlayerCustomization({
-                    name: this.studentName,
+                    name: `${this.studentName} (#${this.absen})`,
                     color: this.color,
                     hat: this.hat,
                     cape: this.cape
@@ -111,16 +115,28 @@ class StudentApp {
             });
         }
 
-        // Room Join UI
+        // Room Join UI (Nama + No. Absen + Kode Kelas)
         const btnJoinRoom = document.getElementById("btn-join-room");
         if (btnJoinRoom) {
             btnJoinRoom.addEventListener("click", () => {
                 const codeInp = document.getElementById("input-room-code");
+                const nameInp = document.getElementById("input-join-name");
+                const absenInp = document.getElementById("input-join-absen");
+
                 const code = (codeInp ? codeInp.value : "").trim().toUpperCase();
-                if (!code) {
-                    alert("Masukkan kode Room kelas dari Guru!");
+                const name = (nameInp ? nameInp.value : "").trim();
+                const absen = (absenInp ? absenInp.value : "").trim();
+
+                if (!code || !name) {
+                    alert("Masukkan Kode Kelas 6 huruf dan Nama Lengkap!");
                     return;
                 }
+
+                this.studentName = name;
+                if (absen) this.absen = absen.padStart(2, "0");
+                localStorage.setItem("zuper_name", this.studentName);
+                localStorage.setItem("zuper_absen", this.absen);
+
                 this.joinClassRoom(code);
             });
         }
@@ -134,13 +150,14 @@ class StudentApp {
             });
         }
 
-        // Close generic modal buttons
+        // Close modal buttons
         document.querySelectorAll(".close-modal").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const modal = e.target.closest(".modal-container");
                 if (modal) {
                     modal.classList.add("hidden");
                     modal.classList.remove("flex");
+                    this.stopQuestionTimer();
                 }
             });
         });
@@ -180,8 +197,6 @@ class StudentApp {
                     }
 
                     knob.style.transform = `translate(${dx}px, ${dy}px)`;
-
-                    // Feed normalized vector to 3D world
                     if (this.world) {
                         this.world.setTouchInput(dx / maxDist, dy / maxDist);
                     }
@@ -203,6 +218,9 @@ class StudentApp {
         const nameEl = document.getElementById("hud-player-name");
         if (nameEl) nameEl.textContent = this.studentName;
 
+        const absenEl = document.getElementById("hud-absen-tag");
+        if (absenEl) absenEl.textContent = `Absen: ${this.absen}`;
+
         const scoreEl = document.getElementById("hud-score");
         if (scoreEl) scoreEl.textContent = this.score.toLocaleString();
 
@@ -223,38 +241,37 @@ class StudentApp {
         if (coinsEl) coinsEl.textContent = this.coins;
     }
 
-    handleZoneInteraction(zone) {
+    handleBuildingDoorInteraction(zone) {
         if (!zone) return;
         if (this.sound) this.sound.playClick();
 
-        if (zone.id === "npc-wiseman") {
-            this.showWisemanDialogue();
+        if (zone.id === "building-minigames") {
+            const mgModal = document.getElementById("minigames-modal");
+            if (mgModal) {
+                mgModal.classList.remove("hidden");
+                mgModal.classList.add("flex");
+                if (window.miniGamesManager) {
+                    window.miniGamesManager.startLariKilat("minigames-container");
+                }
+            }
             return;
         }
 
-        // Portal triggered: find relevant question
+        // Subject Buildings
         let question = null;
-        if (zone.id === "portal-english") {
+        if (zone.id === "building-english") {
             question = ZUPER_DEFAULT_QUESTIONS.find(q => q.subject.includes("English"));
-        } else if (zone.id === "portal-math") {
+        } else if (zone.id === "building-math") {
             question = ZUPER_DEFAULT_QUESTIONS.find(q => q.subject.includes("Math"));
-        } else if (zone.id === "portal-science") {
+        } else if (zone.id === "building-science") {
             question = ZUPER_DEFAULT_QUESTIONS.find(q => q.subject.includes("Science"));
         } else {
-            // Battle Royale
             question = ZUPER_DEFAULT_QUESTIONS[Math.floor(Math.random() * ZUPER_DEFAULT_QUESTIONS.length)];
         }
 
         if (question) {
             this.openQuizModal(question);
         }
-    }
-
-    showWisemanDialogue() {
-        const modal = document.getElementById("wiseman-modal");
-        if (!modal) return;
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
     }
 
     openQuizModal(question) {
@@ -272,6 +289,9 @@ class StudentApp {
         qSubject.textContent = `${question.subject} • ${question.type.toUpperCase()}`;
         qTitle.textContent = question.question;
         qContainer.innerHTML = "";
+
+        // Start 15s Countdown Timer
+        this.startQuestionTimer(15);
 
         // 1. MULTIPLE CHOICE
         if (question.type === "multiple_choice") {
@@ -335,14 +355,9 @@ class StudentApp {
         else if (question.type === "matching") {
             const wrapper = document.createElement("div");
             wrapper.className = "space-y-3";
-            const notice = document.createElement("p");
-            notice.className = "text-xs text-indigo-300 font-semibold mb-2";
-            notice.textContent = "Pasangkan item di kiri dengan definisi yang benar di kanan:";
-            wrapper.appendChild(notice);
-
             const grid = document.createElement("div");
             grid.className = "space-y-2.5";
-            question.pairs.forEach((pair, idx) => {
+            question.pairs.forEach((pair) => {
                 const row = document.createElement("div");
                 row.className = "flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-xs md:text-sm";
                 row.innerHTML = `
@@ -366,11 +381,6 @@ class StudentApp {
         else if (question.type === "ordering") {
             const wrapper = document.createElement("div");
             wrapper.className = "space-y-3";
-            const notice = document.createElement("p");
-            notice.className = "text-xs text-indigo-300 font-semibold mb-2";
-            notice.textContent = "Urutan hierarki prioritas (PEMDAS):";
-            wrapper.appendChild(notice);
-
             question.correctSequence.forEach((item, idx) => {
                 const step = document.createElement("div");
                 step.className = "flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-indigo-500/30 text-xs md:text-sm";
@@ -393,7 +403,32 @@ class StudentApp {
         modal.classList.add("flex");
     }
 
-    submitAnswer(isCorrect, selectedOption) {
+    startQuestionTimer(seconds = 15) {
+        this.stopQuestionTimer();
+        this.timeLeft = seconds;
+        const timerEl = document.getElementById("quiz-timer");
+        if (timerEl) timerEl.textContent = `${this.timeLeft}s`;
+
+        this.qTimerInterval = setInterval(() => {
+            this.timeLeft--;
+            if (timerEl) timerEl.textContent = `${this.timeLeft}s`;
+
+            if (this.timeLeft <= 0) {
+                this.stopQuestionTimer();
+                this.submitAnswer(false, -1, true); // Timeout counts as wrong
+            }
+        }, 1000);
+    }
+
+    stopQuestionTimer() {
+        if (this.qTimerInterval) {
+            clearInterval(this.qTimerInterval);
+            this.qTimerInterval = null;
+        }
+    }
+
+    submitAnswer(isCorrect, selectedOption, isTimeout = false) {
+        this.stopQuestionTimer();
         const responseTimeSec = Math.round((performance.now() - this.qStartTime) / 100) / 10;
         const feedbackBox = document.getElementById("quiz-feedback-box");
         const fbStatus = document.getElementById("quiz-fb-status");
@@ -406,12 +441,11 @@ class StudentApp {
                 fbStatus.className = "text-base font-black text-emerald-400";
                 fbStatus.textContent = "🎉 Luar Biasa! Jawabanmu Benar!";
                 this.combo++;
-                this.score += 100 + (this.combo * 20);
+                this.score += 100 + (this.combo * 20) + (this.timeLeft * 5);
                 this.xp += 40;
                 this.coins += 10;
                 this.spawnFloatingText("+100 PTS!", "#10b981");
 
-                // If in Boss Raid: Laser Spell
                 if (this.roomMode === "boss_raid") {
                     if (this.sound) this.sound.playLaserSpell();
                     this.bossHp = Math.max(0, this.bossHp - 500);
@@ -421,12 +455,11 @@ class StudentApp {
             } else {
                 if (this.sound) this.sound.playWrong();
                 fbStatus.className = "text-base font-black text-rose-400";
-                fbStatus.textContent = "❌ Jawaban Kurang Tepat";
+                fbStatus.textContent = isTimeout ? "⏱️ Waktu Habis!" : "❌ Jawaban Kurang Tepat";
                 this.combo = 0;
                 this.shield = Math.max(0, this.shield - 25);
                 this.spawnFloatingText("-25% SHIELD", "#f43f5e");
 
-                // Check elimination in Battle Royale
                 if (this.shield <= 0 && this.roomMode === "battle_royale") {
                     this.handleEliminated();
                 }
@@ -435,7 +468,6 @@ class StudentApp {
             fbExplanation.textContent = this.currentQ.explanation || "Pembahasan materi terverifikasi.";
             this.updateHUD();
 
-            // Log psychometrics assessment to Supabase
             this.logAssessment(isCorrect, responseTimeSec, typeof selectedOption === "number" ? selectedOption : 0);
         }
     }
@@ -470,7 +502,6 @@ class StudentApp {
         }
     }
 
-    // Supabase Room Sync
     async joinClassRoom(roomCode) {
         if (!this.sb) {
             alert("Koneksi Supabase belum aktif.");
@@ -478,7 +509,6 @@ class StudentApp {
         }
 
         try {
-            // 1. Verify Room
             const { data: room, error: roomErr } = await this.sb
                 .from("zuper_rooms")
                 .select("*")
@@ -486,7 +516,7 @@ class StudentApp {
                 .single();
 
             if (roomErr || !room) {
-                alert(`Room "${roomCode}" tidak ditemukan!`);
+                alert(`Room Kelas "${roomCode}" tidak ditemukan!`);
                 return;
             }
 
@@ -494,10 +524,11 @@ class StudentApp {
             this.roomMode = room.game_mode || "battle_royale";
             this.isMultiplayer = true;
 
-            // 2. Upsert player into room
+            const displayName = `${this.studentName} (#${this.absen})`;
+
             await this.sb.from("zuper_players").upsert({
                 room_code: roomCode,
-                student_name: this.studentName,
+                student_name: displayName,
                 avatar_color: this.color,
                 avatar_hat: this.hat,
                 avatar_cape: this.cape,
@@ -509,13 +540,11 @@ class StudentApp {
                 is_ready: true
             }, { onConflict: "room_code, student_name" });
 
-            // 3. Subscribe to Realtime Postgres Changes
             this.subscribeToRoom(roomCode);
 
             const lobbyModal = document.getElementById("join-room-modal");
             if (lobbyModal) lobbyModal.classList.add("hidden");
 
-            // Show HUD Room Indicator
             const roomIndicator = document.getElementById("hud-room-indicator");
             if (roomIndicator) {
                 roomIndicator.classList.remove("hidden");
@@ -528,7 +557,7 @@ class StudentApp {
             }
 
             if (this.sound) this.sound.playCorrect();
-            alert(`Berhasil terhubung ke Room ${roomCode}!`);
+            alert(`Berhasil terhubung ke Room Kelas ${roomCode} sebagai ${displayName}!`);
         } catch (e) {
             console.error("Join room error:", e);
         }
@@ -546,7 +575,7 @@ class StudentApp {
                 schema: "public",
                 table: "zuper_players",
                 filter: `room_code=eq.${roomCode}`
-            }, (payload) => {
+            }, () => {
                 this.refreshRoomPlayers();
             })
             .on("postgres_changes", {
@@ -556,11 +585,9 @@ class StudentApp {
                 filter: `room_code=eq.${roomCode}`
             }, (payload) => {
                 const updated = payload.new;
-                if (updated) {
-                    if (updated.boss_hp !== undefined) {
-                        this.bossHp = updated.boss_hp;
-                        this.updateBossBar();
-                    }
+                if (updated && updated.boss_hp !== undefined) {
+                    this.bossHp = updated.boss_hp;
+                    this.updateBossBar();
                 }
             })
             .subscribe();
@@ -583,6 +610,7 @@ class StudentApp {
     async broadcastPosition() {
         if (!this.sb || !this.currentRoom || !this.world) return;
         try {
+            const displayName = `${this.studentName} (#${this.absen})`;
             await this.sb.from("zuper_players").update({
                 pos_x: Math.round(this.world.playerPos.x * 10) / 10,
                 pos_z: Math.round(this.world.playerPos.z * 10) / 10,
@@ -591,7 +619,7 @@ class StudentApp {
                 last_seen: new Date().toISOString()
             }).match({
                 room_code: this.currentRoom,
-                student_name: this.studentName
+                student_name: displayName
             });
         } catch (e) {}
     }
@@ -601,7 +629,7 @@ class StudentApp {
         try {
             await this.sb.from("zuper_assessments").insert({
                 room_code: this.currentRoom || "SOLO_QUEST",
-                student_name: this.studentName,
+                student_name: `${this.studentName} (#${this.absen})`,
                 question_id: this.currentQ ? this.currentQ.id : "q_unknown",
                 is_correct: isCorrect,
                 response_time_sec: responseTimeSec,

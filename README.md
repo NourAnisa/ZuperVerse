@@ -1,123 +1,121 @@
 # 🪐 ZuperVerse: 3D Educational Metaverse & Teacher Psychometrics Suite
 
-Platform Metaverse Pembelajaran Interaktif 3D dan Sistem Asesmen Psikometrik Guru terpadu yang dirancang khusus untuk pembelajaran modern sekolah (SMP/SMA). 
+Platform Gamifikasi Pembelajaran 3D dan Sistem Asesmen Psikometrik Guru terpadu yang dirancang sesuai Roadmap 4 Fase Pengembangan Digital Sekolah.
 
-Aplikasi ini berjalan **100% pada peramban web (client-side)** dan siap di-hosting langsung di **GitHub Pages**, dengan sinkronisasi multiplayer real-time dan basis data yang ditenagai oleh **Supabase Cloud Realtime Engine** (Region Singapore).
-
----
-
-## 🌟 Fitur Utama Platform
-
-### 1. Portal Peserta Didik (Student 3D World & Battle Royale)
-- **Dunia Virtual 3D WebGL (Three.js):**
-  - Pulau Akademia terapung dengan landmark interaktif: Menara Bahasa & Kosa Kata (Utara), Kastil Matematika (Barat), Laboratorium Sains & Logika (Timur), serta Arena Pertandingan (Selatan).
-  - NPC Guru Robot (*ZuperWiseman*) yang memberikan panduan quest harian secara interaktif.
-  - Multi-avatar rendering: Siswa dapat melihat pergerakan karakter 3D teman sekelasnya secara real-time.
-- **Kustomisasi Avatar Penuh:**
-  - Pilihan warna kostum (Indigo, Pink Neon, Cyan, Emerald, Amber, Crimson).
-  - Aksesoris kepala (Topi Pelajar, Mahkota Juara, Topi Penyihir, Tanduk Cyber).
-  - Jubah Pahlawan Pengetahuan (Hero Cape).
-- **Kontrol Adaptif Lintas Perangkat:**
-  - Keyboard (WASD / Tombol Panah / Spasi / E).
-  - *Virtual Touch Joystick* otomatis muncul pada layar sentuh (HP, tablet, dan Chromebook).
-- **Radar Minimap:**
-  - Radar berputar dengan indikator posisi pemain dan lingkar *Safe Zone*.
-- **4 Mode Permainan Edukatif:**
-  1. *Solo Free Roam Quest* (Eksplorasi mandiri dan interaksi portal kuis).
-  2. *Battle Royale Mode* (Zona aman menyusut, shield berkurang saat jawaban salah, pemain bertahan terakhir menjadi juara).
-  3. *Co-op Boss Raid Mode* (Bar HP Boss Mega Golem bersama; setiap jawaban benar memancarkan laser spell untuk mengalahkan monster).
-  4. *1v1 Quiz Duel* (Adu cepat dan akurasi skor langsung antar siswa).
-- **5 Tipe Soal Asesmen Interaktif:**
-  1. Pilihan Ganda (*Multiple Choice*)
-  2. Benar / Salah (*True / False*)
-  3. Isian Singkat (*Short Answer*)
-  4. Menjodohkan Pasangan (*Matching Pairs*)
-  5. Urutan Logika Hierarki (*Sequence Ordering - PEMDAS*)
+Platform ini dibangun **100% Client-Side** sehingga siap di-hosting langsung di **GitHub Pages** dan dapat dipasang di layar utama HP sebagai aplikasi **PWA (Progressive Web App)** yang mendukung permainan offline, dengan sinkronisasi multiplayer real-time ditenagai oleh **Supabase Cloud Engine** (Region Singapore).
 
 ---
 
-### 2. Dashboard Eksekutif Guru (Teacher LMS & Asesmen Psikometrik)
-- **Pusat Kendali Ruangan (Room & Match Controller):**
-  - Pembuat Room PIN 6-karakter instan (contoh: `ZUP77`).
-  - Pemilihan mode pertandingan (Battle Royale, Boss Raid, Duel, Solo).
-  - Tombol aksi Guru: Mulai Pertandingan, Kecilkan Safe Zone, dan Selesaikan Sesi.
-  - *Live Student Telemetry*: Memantau seluruh siswa di kelas, persentase shield, perolehan skor, dan status hidup/tereliminasi via Supabase Realtime.
-- **Analisis Butir Soal Psikometrik (Psychometric Item Analysis):**
-  - **Tingkat Kesukaran ($P$ - Difficulty Index):**
+## 🗺️ Roadmap Pengembangan 4 Fase (Lengkap & Terimplementasi)
+
+### 📌 Fase 1: Core Assessment Engine & Web UI (Bulan 1)
+- **Antarmuka Mode Guru untuk CRUD Soal (5 Jenis Soal):**
+  1. *Pilihan Ganda (Multiple Choice)*
+  2. *Benar / Salah (True / False)*
+  3. *Isian Singkat (Short Answer)*
+  4. *Menjodohkan Pasangan (Matching Pairs)*
+  5. *Urutan Logika Hierarki (Sequence Ordering - PEMDAS)*
+- **Impor Soal Otomatis dari Teks / Microsoft Word:**
+  - Parser cerdas yang mampu mengenali salinan teks bernomor `1. Soal`, `A. Opsi`, `Kunci: A`, dan `Pembahasan: ...` langsung ke dalam Bank Soal.
+- **Mekanisme Kelas Sederhana:**
+  - Kode Kelas 6 Huruf instan (contoh: `ZUP789`).
+  - Siswa bergabung dengan validasi: **Nama Lengkap Siswa + Nomor Absen (1 - 40)**.
+- **Modul Kuis 2D Responsif:**
+  - Timer hitung mundur dinamis (15 detik) per soal.
+  - Sistem 3 Nyawa (*Hearts/Shield*).
+  - Skor berbasis kecepatan menjawab dan pengganda kombo (*Streak Multiplier*).
+  - Kotak umpan balik (*Feedback Box*) dengan penjelasan materi pembelajaran mendalam.
+
+---
+
+### 🏛️ Fase 2: 3D Environment & Building Interaction (Bulan 2)
+- **Scene 3D "Kota Ilmu" (Three.js WebGL Engine):**
+  - Kota terapung modern dengan jalan raya aspal cyberpunk, lampu jalan, taman, dan kristal energi pusat.
+  - Karakter 3D yang lincah dengan kontrol Keyboard (WASD/Panah/Spasi) dan *Virtual Touch Joystick* di smartphone/tablet.
+- **Gedung-Gedung Mapel 3D:**
+  1. **English Hall (Menara Bahasa & Kosa Kata)** di koordinat Utara `(0, 0, -26)`.
+  2. **Math Citadel (Kastil Matematika & Aljabar)** di koordinat Barat `(-26, 0, 0)`.
+  3. **Science Lab (Laboratorium Sains & Robotik)** di koordinat Timur `(26, 0, 0)`.
+  4. **Mini-Games Stadium (Stadion Turnamen)** di koordinat Selatan `(0, 0, 26)`.
+- **Integrasi Trigger Pintu Masuk:**
+  - Saat karakter melangkah masuk ke pintu gedung mapel tertentu, kuis 2D overlay langsung terbuka otomatis sesuai kurikulum gedung tersebut.
+
+---
+
+### ⚡ Fase 3: Mode Lomba Mini-Games & PWA Offline (Bulan 3)
+- **Mini-Game 1: Lari Kilat (Speed Runner 4-Lajur):**
+  - Pemain berlari menembus 4 lajur (Lajur A, B, C, D).
+  - Menghindari rintangan dan berpindah ke lajur jawaban yang benar sebelum menerobos gerbang kuis.
+- **Mini-Game 2: Jembatan Juara (Sky Bridge Quiz):**
+  - Tantangan melintasi jembatan kaca di langit.
+  - Memilih ubin kaca jawaban yang kokoh; memilih ubin yang salah menyebabkan kaca retak dan mengurangi nyawa.
+- **Papan Peringkat (Leaderboard):**
+  - Peringkat lokal tersimpan di peramban dan peringkat kelas real-time tersinkron di Supabase.
+- **PWA (Progressive Web App) Offline Support:**
+  - `manifest.json` dan Service Worker (`sw.js`) dengan strategi *Cache-First* memungkinkan game diinstal di layar beranda (*Add to Home Screen*) dan dimainkan saat tidak ada koneksi internet.
+
+---
+
+### 📊 Fase 4: Real-Time Multiplayer, Live Monitoring & Rapor (Bulan 4)
+- **Real-Time Multiplayer & Live Monitoring Guru (Supabase Channels):**
+  - Guru dapat memantau presensi siswa berdasarkan Nama + No. Absen, persentase shield, skor live, dan status eliminasi secara live.
+  - Kendali sesi guru: Mulai Pertandingan, Kecilkan Safe Zone, dan Selesaikan Sesi.
+- **Kalkulasi Psikometri Baku:**
+  - **Tingkat Kesukaran ($P$ Index):**
     $$P = \frac{B}{N}$$
-    Kategori otomatis: *Mudah* ($P > 0.70$), *Sedang / Proporsional* ($0.30 \le P \le 0.70$), dan *Sukar* ($P < 0.30$).
-  - **Daya Pembeda ($D$ - Discrimination Index):**
-    Menggunakan formula baku perbandingan kelompok 27% Atas vs 27% Bawah:
+    Klasifikasi: *Mudah* ($P > 0.70$), *Sedang / Ideal* ($0.30 \le P \le 0.70$), dan *Sukar* ($P < 0.30$).
+  - **Daya Pembeda ($D$ Index):**
+    Formula baku metode 27% Kelompok Atas (*Upper*) vs 27% Kelompok Bawah (*Lower*):
     $$D = \frac{U - L}{n}$$
-    Kategori otomatis: *Sangat Baik* ($D \ge 0.40$), *Baik* ($0.30 \le D < 0.40$), *Cukup* ($0.20 \le D < 0.30$), dan *Perlu Direvisi* ($D < 0.20$).
-  - Rekomendasi otomatis status soal untuk bank soal ujian sekolah.
-- **Generator Rapor Naratif Otomatis (Siap Cetak / Ekspor PDF):**
-  - Menganalisis ketepatan dan pola capaian siswa.
-  - Menghasilkan narasi deskripsi capaian kompetensi siswa, catatan kognitif, dan rekomendasi tindak lanjut bagi orang tua/guru.
-  - Tata letak khusus cetak (*print-ready layout*) dengan satu kali klik.
-- **Bank Soal Interaktif (Interactive Question Builder):**
-  - Formulir penambahan soal dinamis untuk kelima tipe soal asesmen.
+    Klasifikasi: *Sangat Baik* ($D \ge 0.40$), *Baik* ($0.30 \le D < 0.40$), *Cukup* ($0.20 \le D < 0.30$), dan *Jelek* ($D < 0.20$).
+  - **Distribusi Nilai Kelas:**
+    Menghitung otomatis Rata-rata (*Mean*), Nilai Tengah (*Median*), Standar Deviasi ($\sigma$), Nilai Tertinggi, Nilai Terendah, dan Persentase Ketuntasan KKM 75%.
+- **Generator Rapor Capaian TP (Tujuan Pembelajaran) Otomatis:**
+  - Menyusun narasi capaian kompetensi Kurikulum Merdeka dan rekomendasi tindak lanjut guru per siswa.
+- **Sertifikat Prestasi Siswa (*Certificate of Achievement*) Siap Cetak:**
+  - Generator sertifikat resmi dengan ornamen emas, tanda tangan digital guru, nomor seri, dan verifikasi QR, siap dicetak langsung atau disimpan ke PDF.
 
 ---
 
-## 🏗️ Arsitektur Teknologi
+## 🏗️ Struktur File Repositori
 
 ```
-ZuperVerse (Static Web Client di GitHub Pages)
-├── index.html        (Portal Masuk: Pemilihan Peran Siswa / Guru)
-├── student.html      (Dunia 3D Siswa, Three.js WebGL & HUD Gamifikasi)
-├── teacher.html      (Dashboard Guru, Analisis Butir Soal & Rapor Naratif)
-├── css/style.css     (Tema Cyberpunk, Glassmorphism & Print Styling)
+ZuperVerse/
+├── index.html              (Portal Pilihan Peran: Siswa / Guru & Status Roadmap)
+├── student.html            (Dunia 3D Kota Ilmu, Pintu Gedung, Joystick & Kuis 2D)
+├── teacher.html            (Dashboard Guru, Impor Word, Psikometrik & Rapor TP)
+├── manifest.json           (Konfigurasi PWA Web App Manifest)
+├── sw.js                   (Service Worker untuk Offline Caching)
+├── README.md               (Dokumentasi Teknis & Panduan Fase 1-4)
+├── css/
+│   └── style.css           (Tema Cyberpunk, Glassmorphism, Joystick & Print Layout)
 └── js/
-    ├── supabase-config.js   (Konektor SDK Supabase Realtime)
-    ├── audio.js             (Synthesizer Audio Web Audio API Prosedural)
-    ├── questions-default.js (Bank Soal 5 Tipe Pembelajaran SMP)
-    ├── world3d.js           (Engine Tiga Dimensi Three.js, Pulau & Avatar)
-    ├── student.js           (Game Loop Siswa, Joystick, Kuis & Safe Zone)
-    └── teacher.js           (Logika Telemetri Guru, Rumus Psikometrik & Rapor)
+    ├── supabase-config.js  (Konektor SDK Supabase Realtime)
+    ├── audio.js            (Synthesizer Audio Web Audio API Prosedural)
+    ├── questions-default.js(Bank Soal 5 Tipe Pembelajaran SMP)
+    ├── minigames.js        (Mode Lari Kilat 4-Lajur & Jembatan Juara)
+    ├── psychometrics.js    (Kalkulasi Baku P, D 27% & Distribusi Nilai Kelas)
+    ├── certificate.js      (Generator Sertifikat Prestasi Siswa Siap Cetak)
+    ├── world3d.js          (Engine 3D Three.js Kota Ilmu & Pintu Gedung Mapel)
+    ├── student.js          (Game Loop Siswa, No. Absen, Timer 15s & Supabase)
+    └── teacher.js          (Dashboard Guru, Impor Word, Telemetri & Rapor TP)
 ```
-
-### Integrasi Basis Data Cloud: Supabase Realtime
-- **Endpoint:** `https://vmsmmueseewuxgqtaguf.supabase.co` (Region Singapore / `ap-southeast-1`)
-- **Tabel Basis Data:**
-  - `zuper_rooms`: Kode room, nama guru, mode game, radius safe zone, HP boss.
-  - `zuper_players`: Posisi 3D ($x, z$), warna & topi avatar, live shield, live score, status eliminasi.
-  - `zuper_assessments`: Log jawaban butir soal dan catatan waktu respons untuk analisis psikometrik.
 
 ---
 
-## 🚀 Panduan Menjalankan & Deployment
+## 🚀 Panduan Menjalankan & Deployment ke GitHub Pages
 
-### 1. Membuka Secara Lokal (Local Development)
-Buka file `index.html` langsung menggunakan peramban modern (Google Chrome, Microsoft Edge, Safari, Firefox) atau jalankan melalui local server:
-```bash
-# Menggunakan Python HTTP Server
-python -m http.server 8000
-```
-Buka `http://localhost:8000` pada peramban.
-
-### 2. Mengaktifkan GitHub Pages (Hosting Online Gratis)
-1. Buka repositori di GitHub: `https://github.com/NourAnisa/ZuperVerse`
-2. Masuk ke menu **Settings** ➔ **Pages**.
-3. Pada bagian **Build and deployment**:
-   - Source: **Deploy from a branch**
-   - Branch: **main** / folder **/(root)**
-4. Klik **Save**. Dalam 1-2 menit, situs akan aktif secara online di:
+1. **Akses Langsung di Repositori:**
+   `https://github.com/NourAnisa/ZuperVerse`
+2. **Aktifkan GitHub Pages:**
+   - Masuk ke menu **Settings** ➔ **Pages**.
+   - Pada bagian **Build and deployment**, pilih **Deploy from a branch**.
+   - Pilih branch **main** dan folder **/(root)**, lalu klik **Save**.
+3. **URL Live GitHub Pages:**
    `https://nouranisa.github.io/ZuperVerse/`
+4. **Instal sebagai Aplikasi PWA di HP:**
+   Buka link di Google Chrome/Safari pada smartphone, lalu ketuk menu peramban dan pilih **Tambahkan ke Layar Utama (Add to Home Screen)**. Aplikasi ZuperVerse akan terpasang di HP dan dapat dimainkan offline.
 
 ---
 
-## 📖 Panduan Penggunaan di Kelas
-
-### Skenario Pembelajaran Guru:
-1. Guru membuka menu **Dashboard Guru** di laptop atau proyektor kelas.
-2. Masukkan nama kelas/guru dan pilih mode permainan (misal: *Battle Royale* atau *Boss Raid*).
-3. Klik **Buka Room Kelas Sekarang** untuk mendapatkan Kode PIN (misal: `ZUP88`).
-4. Siswa di HP atau laptop masing-masing membuka **Portal Siswa**, mengkustomisasi avatar mereka, dan memasukkan kode PIN.
-5. Guru melihat nama dan avatar seluruh siswa muncul di layar proyektor secara real-time.
-6. Guru menekan **Mulai Pertandingan**. Siswa menjawab soal-soal interaktif di dunia 3D.
-7. Di akhir sesi, Guru dapat langsung melihat tabel **Analisis Butir Soal Psikometrik** dan mencetak **Rapor Naratif Siswa** untuk evaluasi pembelajaran.
-
----
-
-Dibuat dengan ❤️ untuk kemajuan inovasi teknologi pendidikan digital Indonesia.
+Dibuat dengan dedikasi penuh untuk digitalisasi dan inovasi pendidikan Indonesia.
