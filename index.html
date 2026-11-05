@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZuperVerse - Platform Metaverse Edukasi 3D & Asesmen Psikometrik Guru</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#080c14',
+                            800: '#0f172a',
+                            700: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-dark-900 text-slate-100 min-h-screen flex flex-col justify-between select-none antialiased">
+
+    <!-- Top Navigation -->
+    <header class="w-full glass-panel border-b border-indigo-500/20 px-6 py-4 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/30">
+                    🪐
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+                        ZuperVerse
+                    </h1>
+                    <p class="text-[11px] text-indigo-300/80 font-medium">3D Gamified Learning Metaverse & Psychometrics LMS</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Supabase Realtime Cloud</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Selection Section -->
+    <main class="flex-1 flex flex-col items-center justify-center max-w-5xl mx-auto px-4 py-12 text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs md:text-sm font-semibold mb-6">
+            <span>✨ Generasi Baru Gamifikasi Pendidikan Berbasis 3D WebGL & Psikometrik</span>
+        </div>
+
+        <h2 class="text-4xl md:text-6xl font-black tracking-tight leading-tight md:leading-none max-w-3xl mb-6">
+            Jelajahi Dunia Belajar, Taklukkan <span class="bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent">Metaverse Akademia!</span>
+        </h2>
+
+        <p class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto mb-12 leading-relaxed">
+            Platform pembelajaran interaktif terintegrasi: Siswa bertualang di pulau 3D dengan mode Battle Royale & Boss Raid, sementara Guru memantau telemetri kelas, menganalisis butir soal secara psikometrik, dan mencetak rapor naratif otomatis.
+        </p>
+
+        <!-- Role Portals Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+            <!-- PORTAL SISWA -->
+            <a href="student.html" class="glass-panel p-8 rounded-3xl border border-indigo-500/40 hover:border-indigo-400 transition-all transform hover:-translate-y-1.5 shadow-2xl shadow-indigo-950/40 flex flex-col justify-between text-left group">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        🎮
+                    </div>
+                    <span class="text-xs uppercase tracking-widest font-bold text-indigo-400">Portal Peserta Didik</span>
+                    <h3 class="text-2xl font-black text-white mt-1 mb-3">Dunia 3D Siswa</h3>
+                    <p class="text-xs md:text-sm text-slate-300 leading-relaxed mb-8">
+                        Kustomisasi avatarmu, jelajahi pulau Akademia dalam 3D, masuki arena Battle Royale dengan safe zone yang mengecil, dan kalahkan Boss monster bersama teman sekelas!
+                    </p>
+                </div>
+                <div class="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 font-bold text-white text-sm flex items-center justify-between group-hover:shadow-lg group-hover:shadow-indigo-500/30 transition-all">
+                    <span>Masuk sebagai Siswa</span>
+                    <span>🚀</span>
+                </div>
+            </a>
+
+            <!-- PORTAL GURU -->
+            <a href="teacher.html" class="glass-panel p-8 rounded-3xl border border-pink-500/40 hover:border-pink-400 transition-all transform hover:-translate-y-1.5 shadow-2xl shadow-pink-950/40 flex flex-col justify-between text-left group">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        📊
+                    </div>
+                    <span class="text-xs uppercase tracking-widest font-bold text-pink-400">Portal Pendidik & Asesor</span>
+                    <h3 class="text-2xl font-black text-white mt-1 mb-3">Dashboard Guru</h3>
+                    <p class="text-xs md:text-sm text-slate-300 leading-relaxed mb-8">
+                        Buka room kelas, kelola 5 tipe bank soal interaktif, analisis butir soal psikometrik (Tingkat Kesukaran P & Daya Beda D 27%), dan ekspor rapor naratif otomatis siap cetak.
+                    </p>
+                </div>
+                <div class="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-600 font-bold text-white text-sm flex items-center justify-between group-hover:shadow-lg group-hover:shadow-pink-500/30 transition-all">
+                    <span>Buka Dashboard Guru</span>
+                    <span>👑</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-6 text-xs text-slate-500 border-t border-slate-800/80">
+        <p>ZuperVerse • Platform Gamifikasi Pembelajaran 3D & Asesmen Psikometrik Guru</p>
+        <p class="mt-1 text-[11px] text-slate-600">Ditenagai oleh Three.js WebGL Engine & Supabase Realtime Database</p>
+    </footer>
+
+</body>
+</html>

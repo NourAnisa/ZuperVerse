@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZuperVerse - 3D Student World & Battle Arena</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#080c14',
+                            800: '#0f172a',
+                            700: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-dark-900 text-slate-100 w-screen h-screen overflow-hidden select-none relative">
+
+    <!-- 3D WebGL Canvas Viewport -->
+    <div id="viewport3d"></div>
+
+    <!-- =================================================================== -->
+    <!-- IN-GAME HUD OVERLAY                                                 -->
+    <!-- =================================================================== -->
+    <div class="absolute inset-0 pointer-events-none z-10 flex flex-col justify-between p-4 md:p-6">
+        
+        <!-- Top HUD Bar -->
+        <div class="flex items-start justify-between gap-4 pointer-events-auto">
+            <!-- Left: Player Info & XP -->
+            <div class="glass-panel p-3.5 rounded-2xl border border-indigo-500/30 flex items-center gap-3.5 shadow-xl">
+                <button id="btn-custom-avatar" title="Kustomisasi Avatar" class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 border border-indigo-400/50 flex items-center justify-center text-xl shadow-md hover:scale-105 active:scale-95 transition-all">
+                    🧙
+                </button>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="hud-player-name" class="font-black text-sm md:text-base text-slate-100 max-w-[120px] truncate">Adventurer</span>
+                        <span id="hud-level" class="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 font-bold text-[10px] border border-indigo-500/30">Lv. 1</span>
+                    </div>
+                    <!-- XP Bar -->
+                    <div class="w-28 md:w-36 bg-slate-800 h-2 rounded-full overflow-hidden mt-1.5 border border-slate-700">
+                        <div id="hud-xp-bar" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full rounded-full transition-all duration-300" style="width: 15%"></div>
+                    </div>
+                    <span id="hud-xp-val" class="text-[9px] text-slate-400 font-semibold block mt-0.5">30/200 XP</span>
+                </div>
+            </div>
+
+            <!-- Center: Boss HP (Hidden by default) or Room Info -->
+            <div class="flex flex-col items-center gap-2">
+                <!-- Boss Bar Container -->
+                <div id="hud-boss-container" class="hidden glass-panel px-5 py-2.5 rounded-2xl border border-rose-500/60 bg-rose-950/40 text-center shadow-xl max-w-md w-full">
+                    <div class="flex justify-between text-xs font-black mb-1">
+                        <span class="text-rose-400">🔥 MEGA GOLEM BOSS RAID</span>
+                        <span id="hud-boss-hp-val" class="text-white">5000 / 5000 HP</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-rose-900">
+                        <div id="hud-boss-bar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full transition-all" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <!-- Room Indicator Badge -->
+                <div id="hud-room-indicator" class="hidden px-4 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/40 text-indigo-200 text-xs font-bold shadow-lg">
+                    Room: ZUP00 (BATTLE ROYALE)
+                </div>
+            </div>
+
+            <!-- Right: Shield & Score & Shortcuts -->
+            <div class="flex items-center gap-3">
+                <!-- Shield Meter -->
+                <div class="glass-panel px-4 py-2 rounded-2xl border border-cyan-500/30 flex items-center gap-2.5 shadow-xl">
+                    <span class="text-xl">🛡️</span>
+                    <div>
+                        <span class="text-[10px] text-cyan-300 font-bold block leading-none">SHIELD</span>
+                        <span id="hud-shield-val" class="font-black text-sm md:text-base text-cyan-400">100%</span>
+                    </div>
+                </div>
+
+                <!-- Coins -->
+                <div class="glass-panel px-3.5 py-2 rounded-2xl border border-amber-500/30 flex items-center gap-2 shadow-xl">
+                    <span class="text-lg">🪙</span>
+                    <span id="hud-coins" class="font-black text-sm text-amber-400">50</span>
+                </div>
+
+                <!-- Score Pill -->
+                <div class="glass-panel px-4 py-2 rounded-2xl border border-indigo-500/30 flex items-center gap-2 shadow-xl">
+                    <span class="text-sm text-indigo-300 font-bold">PTS:</span>
+                    <span id="hud-score" class="font-black text-sm md:text-base text-amber-400">0</span>
+                </div>
+
+                <!-- Controls -->
+                <button id="btn-toggle-sound" title="Toggle Audio" class="w-10 h-10 rounded-2xl glass-panel border border-slate-700 hover:border-indigo-400 flex items-center justify-center text-sm transition-all active:scale-95">
+                    🔊
+                </button>
+                <a href="index.html" title="Kembali ke Beranda" class="w-10 h-10 rounded-2xl glass-panel border border-slate-700 hover:border-rose-400 flex items-center justify-center text-sm transition-all active:scale-95 text-slate-300 hover:text-white">
+                    🚪
+                </a>
+            </div>
+        </div>
+
+        <!-- Center Proximity Interaction Prompt -->
+        <div id="zone-interaction-prompt" class="hidden pointer-events-auto self-center mb-8">
+            <!-- Injected by world3d.js -->
+        </div>
+
+        <!-- Bottom HUD Bar -->
+        <div class="flex items-end justify-between pointer-events-auto">
+            <!-- Left: Join Room Button -->
+            <div class="flex items-center gap-3">
+                <button onclick="document.getElementById('join-room-modal').classList.remove('hidden'); document.getElementById('join-room-modal').classList.add('flex');" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-bold text-white text-xs md:text-sm shadow-xl shadow-indigo-600/30 flex items-center gap-2 transition-all active:scale-95">
+                    <span>🎮</span>
+                    <span>Gabung Room Kelas Guru</span>
+                </button>
+            </div>
+
+            <!-- Right: Radar Minimap -->
+            <div class="flex flex-col items-end gap-2">
+                <div id="radar-container">
+                    <div class="radar-sweep"></div>
+                    <!-- Player center blip -->
+                    <div class="absolute w-2.5 h-2.5 rounded-full bg-emerald-400 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-md"></div>
+                </div>
+                <span class="text-[10px] text-indigo-300/80 font-bold uppercase tracking-widest">Radar Akademia</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Virtual Touch Joystick for Mobile/Tablet -->
+    <div id="virtual-joystick-zone">
+        <div id="virtual-joystick-knob"></div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 1: AVATAR CUSTOMIZER                                          -->
+    <!-- =================================================================== -->
+    <div id="avatar-modal" class="modal-container fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-indigo-500/50 max-w-md w-full space-y-6 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-700/80 pb-3">
+                <h3 class="text-xl font-black text-white flex items-center gap-2">
+                    <span>🧙</span>
+                    <span>Kustomisasi Avatar Petualang</span>
+                </h3>
+                <button class="close-modal text-2xl text-slate-400 hover:text-white">&times;</button>
+            </div>
+
+            <div class="space-y-4 text-xs md:text-sm">
+                <!-- Name -->
+                <div>
+                    <label class="font-bold text-slate-300 block mb-1.5">Nama Panggilan (Maks 15 Karakter):</label>
+                    <input id="input-avatar-name" type="text" maxlength="15" placeholder="Contoh: Budi_SMP1" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold focus:border-indigo-400 focus:outline-none">
+                </div>
+
+                <!-- Body Color -->
+                <div>
+                    <label class="font-bold text-slate-300 block mb-1.5">Warna Kostum Avatar:</label>
+                    <select id="select-avatar-color" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-semibold focus:border-indigo-400 focus:outline-none">
+                        <option value="#6366f1">Indigo Cyber (Default)</option>
+                        <option value="#ec4899">Pink Neon</option>
+                        <option value="#06b6d4">Cyan Glaze</option>
+                        <option value="#10b981">Emerald Green</option>
+                        <option value="#f59e0b">Amber Gold</option>
+                        <option value="#ef4444">Crimson Flame</option>
+                    </select>
+                </div>
+
+                <!-- Hat -->
+                <div>
+                    <label class="font-bold text-slate-300 block mb-1.5">Aksesoris Kepala / Topi:</label>
+                    <select id="select-avatar-hat" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-semibold focus:border-indigo-400 focus:outline-none">
+                        <option value="cap">Topi Pelajar Santai (Cap)</option>
+                        <option value="crown">Mahkota Juara Kelas (Crown)</option>
+                        <option value="wizard">Topi Penyihir Matematika (Wizard Hat)</option>
+                        <option value="horns">Tanduk Cyber (Horns)</option>
+                    </select>
+                </div>
+
+                <!-- Cape -->
+                <div>
+                    <label class="font-bold text-slate-300 block mb-1.5">Jubah Kehormatan:</label>
+                    <select id="select-avatar-cape" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-semibold focus:border-indigo-400 focus:outline-none">
+                        <option value="none">Tanpa Jubah</option>
+                        <option value="hero">Jubah Pahlawan Pengetahuan (Hero Cape)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="btn-save-avatar" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-bold text-white shadow-lg transition-all active:scale-95">
+                Simpan & Pasang Avatar
+            </button>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 2: JOIN CLASS ROOM                                            -->
+    <!-- =================================================================== -->
+    <div id="join-room-modal" class="modal-container fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-indigo-500/50 max-w-sm w-full space-y-5 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-700/80 pb-3">
+                <h3 class="text-xl font-black text-white flex items-center gap-2">
+                    <span>🎮</span>
+                    <span>Gabung Room Kelas</span>
+                </h3>
+                <button class="close-modal text-2xl text-slate-400 hover:text-white">&times;</button>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-xs text-slate-300">Masukkan kode 6 huruf/angka dari Guru Pengampu:</p>
+                <input id="input-room-code" type="text" maxlength="6" placeholder="Contoh: ZUP99" class="w-full p-4 rounded-2xl bg-slate-900 border border-indigo-500/60 text-amber-400 font-black text-center text-2xl tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            </div>
+
+            <button id="btn-join-room" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 font-bold text-white shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+                <span>Masuk Sekarang</span>
+                <span>🚀</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 3: QUIZ CHALLENGE (5 QUESTION TYPES)                          -->
+    <!-- =================================================================== -->
+    <div id="quiz-modal" class="modal-container fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-indigo-500/50 max-w-2xl w-full space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            
+            <div class="flex items-center justify-between border-b border-slate-700/80 pb-3">
+                <span id="quiz-q-subject" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    MATEMATIKA
+                </span>
+                <button class="close-modal text-2xl text-slate-400 hover:text-white">&times;</button>
+            </div>
+
+            <h3 id="quiz-q-title" class="text-lg md:text-xl font-bold text-white leading-relaxed">
+                Pertanyaan akan dimuat di sini...
+            </h3>
+
+            <!-- Dynamic Question Type Container -->
+            <div id="quiz-interaction-container" class="space-y-4">
+                <!-- Injected dynamically by student.js -->
+            </div>
+
+            <!-- Feedback Box -->
+            <div id="quiz-feedback-box" class="hidden p-4 rounded-2xl bg-slate-800/90 border border-slate-700 space-y-2">
+                <p id="quiz-fb-status" class="text-base font-black text-emerald-400"></p>
+                <p id="quiz-fb-explanation" class="text-xs md:text-sm text-slate-300 leading-relaxed"></p>
+                <button onclick="document.getElementById('quiz-modal').classList.add('hidden');" class="mt-3 w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white text-xs">
+                    Lanjut Menjelajah Dunia 3D ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 4: NPC WISEMAN DIALOGUE                                       -->
+    <!-- =================================================================== -->
+    <div id="wiseman-modal" class="modal-container fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-amber-500/50 max-w-md w-full space-y-5 shadow-2xl text-center">
+            <div class="text-5xl animate-bounce">🤖</div>
+            <h3 class="text-xl font-black text-amber-400">Guru Robot ZuperWiseman</h3>
+            <p class="text-xs md:text-sm text-slate-300 leading-relaxed text-left">
+                "Selamat datang di pulau Akademia, wahai petualang muda! Dekati portal-portal di sekelilingmu untuk menguji wawasan:
+                <br><br>
+                🟣 <b>Utara</b>: English Vocabulary & Counting Spire<br>
+                🔵 <b>Barat</b>: Mathematics Citadel<br>
+                🟢 <b>Timur</b>: Science & Logic Lab<br>
+                🔴 <b>Selatan</b>: Battle Royale Arena Safe Zone
+                <br><br>
+                Kumpulkan poin, jaga shield-mu, dan jadilah juara kelas!"
+            </p>
+            <button class="close-modal w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 font-bold text-white shadow-lg active:scale-95">
+                Siap Melaksanakan Misi! ⚔️
+            </button>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 5: BATTLE ROYALE ELIMINATED                                   -->
+    <!-- =================================================================== -->
+    <div id="eliminated-modal" class="modal-container fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-rose-500/60 max-w-sm w-full space-y-5 text-center shadow-2xl">
+            <div class="text-5xl">💥</div>
+            <h3 class="text-2xl font-black text-rose-500">Shield Habis!</h3>
+            <p class="text-xs text-slate-300">
+                Kamu telah tereliminasi dari Safe Zone. Jangan menyerah, tetap pantau pertandingan teman sekelasmu!
+            </p>
+            <button onclick="location.reload();" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-indigo-600 font-bold text-white shadow-lg">
+                Coba Lagi (Respawn) 🔄
+            </button>
+        </div>
+    </div>
+
+    <!-- Dependencies Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Application Scripts -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/questions-default.js"></script>
+    <script src="js/world3d.js"></script>
+    <script src="js/student.js"></script>
+
+</body>
+</html>
